@@ -1,4 +1,6 @@
-from pyspark.sql import SparkSession
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import StringIndexer, VectorAssembler
+from pyspark.sql import SparkSession, column
 from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
 
 
@@ -62,9 +64,35 @@ titanic_df.select("Age").show()
 
 titanic_df.groupBy("Embarked").count().show()
 
+# Majority of passengers boarded from "S", we can impute with "S"
+titanic_df = titanic_df.na.fill({"Embarked": "S"})
+
+# we can drop Cabin feature as it has lots of null values
+titanic_df = titanic_df.drop("Cabin")
+titanic_df.printSchema()
+
+titanic_df = titanic_df.withColumn("Family-Size", col('SibSp') + col('Parch'))
+titanic_df.groupBy("Family-Size").count().show()
+titanic_df = titanic_df.withColumn('Alone', lit(0))
+titanic_df = titanic_df.withColumn("Alone", when(titanic_df["Family-Size"] == 0, 1).otherwise(titanic_df["Alone"]))
+indexers = [StringIndexer(inputCol=column, outputCol=column+"_index").fit(titanic_df) for column in ["Sex", "Embarked", "Initial"]]
+pipeline = Pipeline(stages=indexers)
+titanic_df = pipeline.fit(titanic_df).transform(titanic_df)
+titanic_df.show()
+titanic_df.printSchema()
+
+# Drop columns which are not required
+titanic_df = titanic_df.drop("PassengerId", "Name", "Ticket", "Cabin", "Embarked", "Sex", "Initial")
+titanic_df.show()
+
+feature = VectorAssembler(inputCols=titanic_df.columns[1:], outputCol="features")
+feature_vector = feature.transform(titanic_df)
+
+feature_vector.show()
 
 
-
+# Now the data is all set, let's split it into training  and test, I'll using 80%,20% approach
+(trainingData, testData) = feature_vector.randomSplit([0.8, 0.2], seed=11)
 
 
 
