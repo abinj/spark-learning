@@ -1,7 +1,9 @@
 from pyspark.ml import Pipeline
-from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, GBTClassifier
+from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, GBTClassifier, \
+    LinearSVC
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import StringIndexer, VectorAssembler
+from pyspark.ml.classification import NaiveBayes
 from pyspark.sql import SparkSession, column
 from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
 
@@ -139,3 +141,31 @@ gbt = GBTClassifier(labelCol="Survived", featuresCol="features")
 gbt_model = gbt.fit(trainingData)
 gbt_prediction = gbt_model.transform(testData)
 gbt_prediction.select("prediction", "Survived", "features").show()
+
+#Evaluation
+gbt_accuracy = evaluator.evaluate(gbt_prediction)
+print("Accuracy of gradient boosted tree classifier is = %g"% (gbt_accuracy))
+print("Test error of gradient boosted tree classifier %g " % (1-gbt_accuracy))
+
+#Naive Bayes
+nb = NaiveBayes(labelCol="Survived", featuresCol="features")
+nb_model = nb.fit(trainingData)
+nb_prediction = nb_model.transform(testData)
+nb_prediction.select("prediction", "Survived", "features").show()
+
+#Evaluation
+nb_accuracy = evaluator.evaluate(nb_prediction)
+print("Accuracy of NaiveBayes is = %g"% (nb_accuracy))
+print("Test error of NaiveBayes = %g " % (1.0 - nb_accuracy))
+
+#Support Vector Machine
+svm = LinearSVC(labelCol="Survived", featuresCol="features")
+svm_model = svm.fit(trainingData)
+svm_prediction = svm_model.transform(testData)
+svm_prediction.select("prediction", "Survived", "features")
+
+#Evaluation
+svm_accuracy = evaluator.evaluate(svm_prediction)
+print("Accuracy of Support Vector Machine  is = %g"% (svm_accuracy))
+print("Test error of Support Vector Machine = %g " % (1.0 - svm_accuracy))
+
