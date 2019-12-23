@@ -1,5 +1,5 @@
 from pyspark.ml import Pipeline
-from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier
+from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import StringIndexer, VectorAssembler
 from pyspark.sql import SparkSession, column
@@ -122,3 +122,10 @@ dt_prediction.select("prediction", "Survived", "features").show()
 dt_accuracy = evaluator.evaluate(dt_prediction)
 print("Accuracy of decision tree classifier is = %g"% (dt_accuracy))
 print("Test error of decision tree classifier = %g" % (1.0 - dt_accuracy))
+
+#Randon Forest Classifier
+rf = RandomForestClassifier(labelCol="Survived", featuresCol="features")
+rf_model = rf.fit(trainingData)
+rf_prediction = rf_model.transform(testData)
+rf_prediction.select("prediction", "Survived", "features").show()
+
