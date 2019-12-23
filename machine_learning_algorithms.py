@@ -1,4 +1,5 @@
 from pyspark.ml import Pipeline
+from pyspark.ml.classification import LogisticRegression
 from pyspark.ml.feature import StringIndexer, VectorAssembler
 from pyspark.sql import SparkSession, column
 from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
@@ -93,6 +94,14 @@ feature_vector.show()
 
 # Now the data is all set, let's split it into training  and test, I'll using 80%,20% approach
 (trainingData, testData) = feature_vector.randomSplit([0.8, 0.2], seed=11)
+
+# Logistic Regression
+lr = LogisticRegression(labelCol="Survived", featuresCol="features")
+
+#Training algorithm
+lrModel = lr.fit(trainingData)
+lr_prediction = lrModel.transform(testData)
+lr_prediction.select("prediction", "Survived", "features").show()
 
 
 
