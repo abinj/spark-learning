@@ -118,4 +118,7 @@ dt_model = dt.fit(trainingData)
 dt_prediction = dt_model.transform(testData)
 dt_prediction.select("prediction", "Survived", "features").show()
 
-
+#Evaluation
+dt_accuracy = evaluator.evaluate(dt_prediction)
+print("Accuracy of decision tree classifier is = %g"% (dt_accuracy))
+print("Test error of decision tree classifier = %g" % (1.0 - dt_accuracy))
