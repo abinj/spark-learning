@@ -1,5 +1,6 @@
 from pyspark.ml import Pipeline
 from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import StringIndexer, VectorAssembler
 from pyspark.sql import SparkSession, column
 from pyspark.sql.functions import mean,col,split, col, regexp_extract, when, lit
@@ -103,7 +104,11 @@ lrModel = lr.fit(trainingData)
 lr_prediction = lrModel.transform(testData)
 lr_prediction.select("prediction", "Survived", "features").show()
 
-
+#Evaluation
+evaluator = MulticlassClassificationEvaluator(labelCol="Survived", predictionCol="prediction", metricName="accuracy")
+lr_accuracy = evaluator.evaluate(lr_prediction)
+print("Accuracy of LogisticRegression is = %g"% (lr_accuracy))
+print("Test Error of LogisticRegression = %g " % (1.0 - lr_accuracy))
 
 
 
