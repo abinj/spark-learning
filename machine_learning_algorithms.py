@@ -129,3 +129,7 @@ rf_model = rf.fit(trainingData)
 rf_prediction = rf_model.transform(testData)
 rf_prediction.select("prediction", "Survived", "features").show()
 
+#Evaluation
+rf_accuracy = evaluator.evaluate(rf_prediction)
+print("Accuracy of RandomForest Classifier is = %g"% (rf_accuracy))
+print("Test error of RandonForest Classifier = %g " % (1.0 - rf_accuracy))
