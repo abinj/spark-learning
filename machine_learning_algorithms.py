@@ -1,5 +1,5 @@
 from pyspark.ml import Pipeline
-from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import StringIndexer, VectorAssembler
 from pyspark.sql import SparkSession, column
@@ -110,5 +110,12 @@ lr_accuracy = evaluator.evaluate(lr_prediction)
 print("Accuracy of LogisticRegression is = %g"% (lr_accuracy))
 print("Test Error of LogisticRegression = %g " % (1.0 - lr_accuracy))
 
+
+
+#Decision Tree Classifier
+dt = DecisionTreeClassifier(labelCol="Survived", featuresCol="features")
+dt_model = dt.fit(trainingData)
+dt_prediction = dt_model.transform(testData)
+dt_prediction.select("prediction", "Survived", "features").show()
 
 
