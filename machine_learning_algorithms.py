@@ -1,5 +1,5 @@
 from pyspark.ml import Pipeline
-from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier
+from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, GBTClassifier
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import StringIndexer, VectorAssembler
 from pyspark.sql import SparkSession, column
@@ -133,3 +133,9 @@ rf_prediction.select("prediction", "Survived", "features").show()
 rf_accuracy = evaluator.evaluate(rf_prediction)
 print("Accuracy of RandomForest Classifier is = %g"% (rf_accuracy))
 print("Test error of RandonForest Classifier = %g " % (1.0 - rf_accuracy))
+
+#Gradient Boosted Tree classifier
+gbt = GBTClassifier(labelCol="Survived", featuresCol="features")
+gbt_model = gbt.fit(trainingData)
+gbt_prediction = gbt_model.transform(testData)
+gbt_prediction.select("prediction", "Survived", "features").show()
