@@ -1,3 +1,4 @@
+from pyspark.ml.classification import LogisticRegression
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import regexp_replace
 from pyspark.ml.feature import Tokenizer, StopWordsRemover, HashingTF, IDF
@@ -32,3 +33,16 @@ tf_idf = IDF(inputCol='hash', outputCol='features') \
     .fit(wrangled).transform(wrangled)
 
 tf_idf.select('terms', 'features').show(4, truncate=False)
+
+
+# # Split the data into training and testing sets
+# sms_train, sms_test = tf_idf.randomSplit([0.8, 0.2], seed=13)
+#
+# # Fit a Logistic Regression model to the training data
+# logistic = LogisticRegression(regParam=0.2).fit(sms_train)
+#
+# # Make predictions on the testing data
+# prediction = logistic.transform(sms_test)
+#
+# # Create a confusion matrix, comparing predictions to known labels
+# prediction.groupBy('label', 'prediction').count().show()
