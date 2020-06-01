@@ -23,11 +23,20 @@ rightp = pd.DataFrame({'A': ['A0', 'A1', 'A6', 'A7'],
 lefts = spark.createDataFrame(leftp)
 rights = spark.createDataFrame(rightp)
 
-#Left Join
+# Left Join
 lefts.join(rights, on='A', how='left')\
     .orderBy('A', ascending=True).show()
 
 # Right Join
 lefts.join(rights, on='A', how='right')\
+    .orderBy('A', ascending=True).show()
+
+
+# Inner Join
+lefts.join(rights, on='A', how='inner')\
+    .orderBy('A', ascending=True).show()
+
+# Full Join
+lefts.join(rights, on='A', how='full')\
     .orderBy('A', ascending=True).show()
 
