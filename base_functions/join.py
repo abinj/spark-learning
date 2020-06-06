@@ -1,11 +1,10 @@
 import pandas as pd
 from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
-from pyspark.sql.window import Window
 
 spark = SparkSession \
     .builder\
-    .appName("learning")\
+    .appName("join")\
     .master("local[*]")\
     .getOrCreate()
 
@@ -61,30 +60,6 @@ ds.groupBy(['col1']).agg({'col2': 'min', 'col3': 'avg'}).show()
 
 # Pivot
 ds.groupBy(['col1']).pivot('col2').sum('col3').show()
-
-
-# Window
-d = {'A':['a','b','c','d', 'e', 'f'],'B':['m','m','n','n', 'm', 'n'],'C':[1,2,3,6,5,7]}
-dp = pd.DataFrame(d)
-df = spark.createDataFrame(dp)
-
-w = Window.partitionBy('B').orderBy(df.C.desc())
-df = df.withColumn('rank', F.rank().over(w))
-df.show()
-
-product_revenue = {"product": ["Thin", "Normal", "Mini", "Ultra thin", "Very thin", "Big"
-    , "Bendable", "Foldable", "Pro", "Pro2"], "category": ["Cell phone", "Tablet", "Tablet"
-    , "Cell phone", "Cell phone", "Tablet", "Cell phone", "Cell phone", "Tablet", "Tablet"]
-    , "revenue": [6000, 1500, 5500, 5000, 6000, 2500, 3000, 3000, 4500, 6500]}
-
-dp = pd.DataFrame(product_revenue)
-df = spark.createDataFrame(dp)
-
-# FInd top 2 products from each category
-w = Window.partitionBy("category").orderBy(df.revenue.desc())
-df = df.withColumn('rank', F.rank().over(w))
-df.show()
-df.filter(df.rank <= 2).show()
 
 
 

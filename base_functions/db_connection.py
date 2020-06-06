@@ -13,7 +13,7 @@ os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
 spark = SparkSession \
     .builder\
-    .appName("learning")\
+    .appName("db_conn")\
     .master("local[*]")\
     .getOrCreate()
 
