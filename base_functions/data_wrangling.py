@@ -53,14 +53,13 @@ user_log_valid.count()
 
 # Users downgrade their accounts
 # Find when  users downgrade their accounts and then flag those log entries.
-# Then use a window function and cumulative sum to distinguish each user's data as either pre or post downgrade events.
 user_log_valid.filter("page= 'Submit Downgrade'").show()
 user_log.select(["userId", "firstname", "page", "level", "song"]).where(user_log.userId == "1138").collect()
 flag_downgrade_event = udf(lambda x: 1 if x == "Submit Downgrade" else 0, IntegerType())
 user_log_valid = user_log_valid.withColumn("downgraded", flag_downgrade_event("page"))
 user_log_valid.head()
 
-
+# Use a window function and cumulative sum to distinguish each user's data as either pre or post downgrade events.
 windowval = Window.partitionBy("userId").orderBy(F.desc("ts")).rangeBetween(Window.unboundedPreceding, 0)
 user_log_valid = user_log_valid.withColumn("phase", F.sum("downgraded").over(windowval))
 user_log_valid.select(["userId", "firstname", "ts", "page", "level", "phase"]).where(user_log.userId == "1138")\
