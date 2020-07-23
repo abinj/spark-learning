@@ -6,7 +6,7 @@ spark = SparkSession \
     .getOrCreate()
 
 print(spark.sparkContext.getConf().getAll())
-path = "/home/abin/my_works/github_works/spark-learning/dataset/sparkify_log_small.json";
+path = "/home/abin/my_works/github_works/spark-learning/dataset/sparkify_log_small.json"
 user_log = spark.read.json(path)
 
 user_log.printSchema()
