@@ -24,7 +24,7 @@ df.write.parquet('/home/abin/my_works/github_works/spark-learning/dataset/flight
 
 # Parquet 2 CSV
 readdf = spark.read.parquet('/home/abin/my_works/github_works/spark-learning/dataset/flights-parquet.parquet')
-readdf.rdd.map(tuple).map(lambda row: str(row[0]) + "," + str(row[1]) + ","+ str(row[2]) + ","+ str(row[3])+ ","+
-                              str(row[4])+","+ str(row[5]) + ","+ str(row[6]) + ","+ str(row[7]) + ","+ str(row[8]) + ","+ str(row[9]))\
+readdf.rdd.map(tuple).map(lambda col: str(col[0]) + "," + str(col[1]) + ","+ str(col[2]) + ","+ str(col[3])+ ","+
+                              str(col[4])+","+ str(col[5]) + ","+ str(col[6]) + ","+ str(col[7]) + ","+ str(col[8]) + ","+ str(col[9]))\
     .saveAsTextFile("/home/abin/my_works/github_works/spark-learning/dataset/flights_new.csv")
 
